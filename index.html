@@ -95,6 +95,15 @@
             font-size: 10px;
             font-weight: bold;
         }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
@@ -104,7 +113,7 @@
         const { useState, useEffect, useRef } = React;
         
         function App() {
-          // ==================== STATE ====================
+          // STATE
           const [wallet, setWallet] = useState(null);
           const [loading, setLoading] = useState(false);
           const [message, setMessage] = useState('');
@@ -135,21 +144,29 @@
           const [newNetwork, setNewNetwork] = useState({ name: '', rpc: '', chainId: '', symbol: '', explorer: '' });
           const qrRef = useRef(null);
 
-          // ==================== CONSTANTS ====================
-          const PLATFORM_WALLET = '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb';
-          const NFT_TRANSFER_FEE = 0.50;
+          // API KEYS
+          const INFURA_KEY = '2eb003d772d345c48214cad05878e67c';
+          const ALCHEMY_KEY = 'RV7R38aklgHvDsNjslY6Xo9ptfJ--r2t';
 
-          // ==================== ALL 15 CHAINS ====================
+          // ALL 15 CHAINS WITH INFURA & ALCHEMY
           const chains = {
             ETH: {
               name: 'Ethereum', symbol: 'ETH', icon: '⟠', color: 'from-blue-500 to-purple-600',
               testnet: { 
-                rpc: 'https://sepolia.infura.io/v3/2eb003d772d345c48214cad05878e67c',
+                rpc: [
+                  `https://sepolia.infura.io/v3/${INFURA_KEY}`,
+                  `https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_KEY}`,
+                  'https://rpc.sepolia.org'
+                ],
                 explorer: 'https://sepolia.etherscan.io', 
                 chainId: 11155111 
               },
               mainnet: { 
-                rpc: 'https://mainnet.infura.io/v3/2eb003d772d345c48214cad05878e67c',
+                rpc: [
+                  `https://mainnet.infura.io/v3/${INFURA_KEY}`,
+                  `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`,
+                  'https://eth.llamarpc.com'
+                ],
                 explorer: 'https://etherscan.io', 
                 chainId: 1 
               }
@@ -157,12 +174,19 @@
             BNB: {
               name: 'BNB Chain', symbol: 'BNB', icon: '◆', color: 'from-yellow-400 to-orange-500',
               testnet: { 
-                rpc: 'https://bsc-testnet-rpc.publicnode.com',
+                rpc: [
+                  'https://bsc-testnet.publicnode.com',
+                  'https://data-seed-prebsc-1-s1.binance.org:8545'
+                ],
                 explorer: 'https://testnet.bscscan.com', 
                 chainId: 97 
               },
               mainnet: { 
-                rpc: 'https://bsc-dataseed1.binance.org',
+                rpc: [
+                  'https://bsc-dataseed1.binance.org',
+                  'https://bsc.publicnode.com',
+                  'https://bsc-dataseed2.binance.org'
+                ],
                 explorer: 'https://bscscan.com', 
                 chainId: 56 
               }
@@ -170,12 +194,19 @@
             POLYGON: {
               name: 'Polygon', symbol: 'MATIC', icon: '⬡', color: 'from-purple-500 to-purple-700',
               testnet: { 
-                rpc: 'https://rpc-amoy.polygon.technology',
+                rpc: [
+                  `https://polygon-amoy.g.alchemy.com/v2/${ALCHEMY_KEY}`,
+                  'https://rpc-amoy.polygon.technology'
+                ],
                 explorer: 'https://amoy.polygonscan.com', 
                 chainId: 80002 
               },
               mainnet: { 
-                rpc: 'https://polygon-rpc.com',
+                rpc: [
+                  `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`,
+                  'https://polygon-rpc.com',
+                  'https://polygon-bor-rpc.publicnode.com'
+                ],
                 explorer: 'https://polygonscan.com', 
                 chainId: 137 
               }
@@ -183,12 +214,15 @@
             AVAX: {
               name: 'Avalanche', symbol: 'AVAX', icon: '▲', color: 'from-red-500 to-pink-600',
               testnet: { 
-                rpc: 'https://api.avax-test.network/ext/bc/C/rpc',
+                rpc: ['https://api.avax-test.network/ext/bc/C/rpc'],
                 explorer: 'https://testnet.snowtrace.io', 
                 chainId: 43113 
               },
               mainnet: { 
-                rpc: 'https://api.avax.network/ext/bc/C/rpc',
+                rpc: [
+                  'https://api.avax.network/ext/bc/C/rpc',
+                  'https://avalanche-c-chain-rpc.publicnode.com'
+                ],
                 explorer: 'https://snowtrace.io', 
                 chainId: 43114 
               }
@@ -196,12 +230,19 @@
             ARBITRUM: {
               name: 'Arbitrum', symbol: 'ETH', icon: '◊', color: 'from-blue-400 to-cyan-500',
               testnet: { 
-                rpc: 'https://sepolia-rollup.arbitrum.io/rpc',
+                rpc: [
+                  `https://arb-sepolia.g.alchemy.com/v2/${ALCHEMY_KEY}`,
+                  'https://sepolia-rollup.arbitrum.io/rpc'
+                ],
                 explorer: 'https://sepolia.arbiscan.io', 
                 chainId: 421614 
               },
               mainnet: { 
-                rpc: 'https://arb1.arbitrum.io/rpc',
+                rpc: [
+                  `https://arb-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`,
+                  'https://arb1.arbitrum.io/rpc',
+                  'https://arbitrum-one-rpc.publicnode.com'
+                ],
                 explorer: 'https://arbiscan.io', 
                 chainId: 42161 
               }
@@ -209,12 +250,19 @@
             OPTIMISM: {
               name: 'Optimism', symbol: 'ETH', icon: '◉', color: 'from-red-400 to-pink-500',
               testnet: { 
-                rpc: 'https://sepolia.optimism.io',
+                rpc: [
+                  `https://opt-sepolia.g.alchemy.com/v2/${ALCHEMY_KEY}`,
+                  'https://sepolia.optimism.io'
+                ],
                 explorer: 'https://sepolia-optimism.etherscan.io', 
                 chainId: 11155420 
               },
               mainnet: { 
-                rpc: 'https://mainnet.optimism.io',
+                rpc: [
+                  `https://opt-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`,
+                  'https://mainnet.optimism.io',
+                  'https://optimism-rpc.publicnode.com'
+                ],
                 explorer: 'https://optimistic.etherscan.io', 
                 chainId: 10 
               }
@@ -222,12 +270,19 @@
             BASE: {
               name: 'Base', symbol: 'ETH', icon: '⚡', color: 'from-blue-600 to-indigo-700',
               testnet: { 
-                rpc: 'https://sepolia.base.org',
+                rpc: [
+                  `https://base-sepolia.g.alchemy.com/v2/${ALCHEMY_KEY}`,
+                  'https://sepolia.base.org'
+                ],
                 explorer: 'https://sepolia.basescan.org', 
                 chainId: 84532 
               },
               mainnet: { 
-                rpc: 'https://mainnet.base.org',
+                rpc: [
+                  `https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`,
+                  'https://mainnet.base.org',
+                  'https://base-rpc.publicnode.com'
+                ],
                 explorer: 'https://basescan.org', 
                 chainId: 8453 
               }
@@ -235,12 +290,15 @@
             ARC: {
               name: 'Circle Arc', symbol: 'USDC', icon: '🔵', color: 'from-blue-400 to-cyan-600',
               testnet: { 
-                rpc: 'https://rpc.testnet.arc.network',
+                rpc: [
+                  'https://rpc.testnet.arc.network',
+                  'https://rpc.blockdaemon.testnet.arc.network'
+                ],
                 explorer: 'https://testnet.arcscan.app', 
                 chainId: 5042002
               },
               mainnet: { 
-                rpc: 'https://arc-mainnet.rpc.caldera.xyz/http',
+                rpc: ['https://arc-mainnet.rpc.caldera.xyz/http'],
                 explorer: 'https://arc.explorer.caldera.xyz',
                 chainId: 41453
               }
@@ -248,12 +306,15 @@
             FANTOM: {
               name: 'Fantom', symbol: 'FTM', icon: '👻', color: 'from-blue-500 to-indigo-600',
               testnet: { 
-                rpc: 'https://rpc.testnet.fantom.network',
+                rpc: ['https://rpc.testnet.fantom.network'],
                 explorer: 'https://testnet.ftmscan.com', 
                 chainId: 4002 
               },
               mainnet: { 
-                rpc: 'https://rpc.ftm.tools',
+                rpc: [
+                  'https://rpc.ftm.tools',
+                  'https://fantom-rpc.publicnode.com'
+                ],
                 explorer: 'https://ftmscan.com', 
                 chainId: 250 
               }
@@ -261,12 +322,12 @@
             ZKSYNC: {
               name: 'zkSync Era', symbol: 'ETH', icon: '⚔️', color: 'from-purple-600 to-blue-600',
               testnet: { 
-                rpc: 'https://sepolia.era.zksync.dev',
+                rpc: ['https://sepolia.era.zksync.dev'],
                 explorer: 'https://sepolia.explorer.zksync.io', 
                 chainId: 300 
               },
               mainnet: { 
-                rpc: 'https://mainnet.era.zksync.io',
+                rpc: ['https://mainnet.era.zksync.io'],
                 explorer: 'https://explorer.zksync.io', 
                 chainId: 324 
               }
@@ -274,12 +335,12 @@
             SCROLL: {
               name: 'Scroll', symbol: 'ETH', icon: '📜', color: 'from-orange-400 to-red-500',
               testnet: { 
-                rpc: 'https://sepolia-rpc.scroll.io',
+                rpc: ['https://sepolia-rpc.scroll.io'],
                 explorer: 'https://sepolia.scrollscan.com', 
                 chainId: 534351 
               },
               mainnet: { 
-                rpc: 'https://rpc.scroll.io',
+                rpc: ['https://rpc.scroll.io'],
                 explorer: 'https://scrollscan.com', 
                 chainId: 534352 
               }
@@ -287,12 +348,12 @@
             MANTLE: {
               name: 'Mantle', symbol: 'MNT', icon: '🧩', color: 'from-gray-800 to-black',
               testnet: { 
-                rpc: 'https://rpc.sepolia.mantle.xyz',
+                rpc: ['https://rpc.sepolia.mantle.xyz'],
                 explorer: 'https://sepolia.mantlescan.xyz', 
                 chainId: 5003 
               },
               mainnet: { 
-                rpc: 'https://rpc.mantle.xyz',
+                rpc: ['https://rpc.mantle.xyz'],
                 explorer: 'https://mantlescan.xyz', 
                 chainId: 5000 
               }
@@ -300,12 +361,12 @@
             LINEA: {
               name: 'Linea', symbol: 'ETH', icon: '📐', color: 'from-gray-700 to-gray-900',
               testnet: { 
-                rpc: 'https://rpc.goerli.linea.build',
+                rpc: ['https://rpc.goerli.linea.build'],
                 explorer: 'https://goerli.lineascan.build', 
                 chainId: 59140 
               },
               mainnet: { 
-                rpc: 'https://rpc.linea.build',
+                rpc: ['https://rpc.linea.build'],
                 explorer: 'https://lineascan.build', 
                 chainId: 59144 
               }
@@ -313,12 +374,12 @@
             HYPERLIQUID: {
               name: 'Hyperliquid', symbol: 'ETH', icon: '💧', color: 'from-cyan-500 to-blue-600',
               testnet: { 
-                rpc: 'https://api.hyperliquid-testnet.xyz/evm',
+                rpc: ['https://api.hyperliquid-testnet.xyz/evm'],
                 explorer: 'https://explorer.hyperliquid-testnet.xyz', 
                 chainId: 998 
               },
               mainnet: { 
-                rpc: 'https://api.hyperliquid.xyz/evm',
+                rpc: ['https://api.hyperliquid.xyz/evm'],
                 explorer: 'https://explorer.hyperliquid.xyz', 
                 chainId: 999 
               }
@@ -326,19 +387,22 @@
             APECHAIN: {
               name: 'ApeChain', symbol: 'APE', icon: '🦍', color: 'from-blue-600 to-indigo-700',
               testnet: { 
-                rpc: 'https://curtis.rpc.caldera.xyz/http',
+                rpc: ['https://curtis.rpc.caldera.xyz/http'],
                 explorer: 'https://curtis.explorer.caldera.xyz', 
                 chainId: 33111 
               },
               mainnet: { 
-                rpc: 'https://apechain.caldera.dev/http',
+                rpc: [
+                  'https://apechain.caldera.dev/http',
+                  'https://rpc.apechain.com'
+                ],
                 explorer: 'https://apechain.calderaexplorer.xyz', 
                 chainId: 33139 
               }
             }
           };
 
-          // ==================== TOKEN ADDRESSES ====================
+          // TOKEN ADDRESSES
           const TOKEN_ADDRESSES = {
             ETH: { 
               USDT: '0xdAC17F958D2ee523a2206206994597C13D831ec7', 
@@ -371,13 +435,13 @@
           ];
 
           const introSlides = [
-            { icon: '🌟', title: 'Welcome to BaintWallet', description: 'The most advanced crypto wallet with 15+ blockchain support.', gradient: 'from-blue-500 to-purple-600' },
-            { icon: '🔐', title: 'Your Keys, Your Crypto', description: 'Military-grade encryption. We never store your private keys.', gradient: 'from-purple-500 to-pink-600' },
-            { icon: '⚡', title: 'Multi-Chain Support', description: 'Ethereum, BNB, Polygon, Arbitrum, Base, Circle Arc, Hyperliquid, ApeChain & more!', gradient: 'from-yellow-400 to-orange-500' },
-            { icon: '💎', title: 'Zero Platform Fees', description: 'FREE sends, WalletConnect, DApp Browser, Referrals. Ready for Web3!', gradient: 'from-indigo-500 to-purple-600' }
+            { icon: '🌟', title: 'Welcome to BaintWallet', description: 'Premium wallet with 15+ chains powered by Infura & Alchemy!', gradient: 'from-blue-500 to-purple-600' },
+            { icon: '🔐', title: 'Your Keys, Your Crypto', description: 'Military-grade security. We NEVER store your keys.', gradient: 'from-purple-500 to-pink-600' },
+            { icon: '⚡', title: 'Multi-Chain Magic', description: 'Ethereum, BNB, Polygon, Arbitrum, Base, Arc, Hyperliquid, ApeChain & more!', gradient: 'from-yellow-400 to-orange-500' },
+            { icon: '💎', title: 'Zero Fees Forever', description: 'FREE sends, WalletConnect, DApp Browser, Referrals!', gradient: 'from-indigo-500 to-purple-600' }
           ];
 
-          // ==================== HELPER FUNCTIONS ====================
+          // HELPER FUNCTIONS
           const showMsg = (msg) => { 
             setMessage(msg); 
             setTimeout(() => setMessage(''), 4000); 
@@ -392,13 +456,28 @@
               time: new Date().toLocaleTimeString(),
               read: false
             };
-            setNotifications(prev => [notif, ...prev.slice(0, 9)]);
+            setNotifications(prev => [notif, ...prev.slice(0, 19)]);
           };
 
-          const getProvider = () => {
+          const getProviderWithRetry = async () => {
             const c = chains[chain];
-            const rpc = isTestnet ? c.testnet.rpc : c.mainnet.rpc;
-            return new ethers.providers.JsonRpcProvider(rpc);
+            const network = isTestnet ? c.testnet : c.mainnet;
+            const rpcList = Array.isArray(network.rpc) ? network.rpc : [network.rpc];
+            
+            for (let i = 0; i < rpcList.length; i++) {
+              try {
+                const rpc = rpcList[i];
+                const provider = new ethers.providers.JsonRpcProvider(rpc);
+                await provider.getNetwork();
+                console.log(`✅ Connected to ${chain} via RPC ${i + 1}`);
+                return provider;
+              } catch (e) {
+                console.error(`❌ RPC ${i + 1} failed:`, e.message);
+                if (i === rpcList.length - 1) {
+                  throw new Error(`All RPCs failed for ${chain}`);
+                }
+              }
+            }
           };
 
           const getExplorer = () => { 
@@ -416,7 +495,7 @@
             return (parseFloat(wallet.balance) * prices[chains[chain].symbol]).toFixed(2); 
           };
 
-          // ==================== API FUNCTIONS ====================
+          // API FUNCTIONS
           const fetchPrices = async () => {
             try {
               const response = await fetch(
@@ -447,7 +526,7 @@
             const tokenList = [];
             
             try {
-              const provider = getProvider();
+              const provider = await getProviderWithRetry();
               
               for (const [symbol, address] of Object.entries(tokenAddresses)) {
                 try {
@@ -490,9 +569,9 @@
               doc.text('Transaction Receipt', 20, 45);
               
               doc.setFontSize(12);
-              doc.text(`Hash: ${tx.hash}`, 20, 65);
-              doc.text(`From: ${wallet.address}`, 20, 80);
-              doc.text(`To: ${tx.to}`, 20, 95);
+              doc.text(`Hash: ${tx.hash.substring(0, 20)}...`, 20, 65);
+              doc.text(`From: ${wallet.address.substring(0, 20)}...`, 20, 80);
+              doc.text(`To: ${tx.to.substring(0, 20)}...`, 20, 95);
               doc.text(`Amount: ${tx.amount} ${tx.symbol}`, 20, 110);
               doc.text(`Chain: ${chains[tx.chain].name}`, 20, 125);
               doc.text(`Status: ${tx.status}`, 20, 140);
@@ -502,21 +581,22 @@
               doc.setFontSize(10);
               doc.setTextColor(128, 128, 128);
               doc.text('Generated by BaintWallet', 20, 280);
+              doc.text('Powered by Infura & Alchemy', 20, 290);
               
               doc.save(`receipt-${tx.hash.slice(0, 10)}.pdf`);
               showMsg('✅ Receipt downloaded!');
-              addNotification('📄', 'Receipt', 'PDF downloaded successfully');
+              addNotification('📄', 'Receipt', 'PDF saved');
             } catch (e) {
               showMsg('❌ Could not generate receipt');
             }
           };
 
-          // ==================== WALLET FUNCTIONS ====================
+          // WALLET FUNCTIONS
           const createWallet = async () => {
             setLoading(true);
             try {
               const w = ethers.Wallet.createRandom();
-              const provider = getProvider();
+              const provider = await getProviderWithRetry();
               const balance = await provider.getBalance(w.address);
               
               setWallet({ 
@@ -526,8 +606,8 @@
                 balance: ethers.utils.formatEther(balance) 
               });
               
-              showMsg('✅ Wallet created successfully!');
-              addNotification('✨', 'Wallet Created', 'Your new wallet is ready!');
+              showMsg('✅ Wallet created!');
+              addNotification('✨', 'Success', 'Wallet ready!');
               setView('wallet');
               fetchPrices();
             } catch (e) { 
@@ -538,7 +618,7 @@
 
           const importWallet = async () => {
             if (!seedInput.trim()) { 
-              showMsg('❌ Please enter your seed phrase'); 
+              showMsg('❌ Enter seed phrase'); 
               return; 
             }
             
@@ -548,13 +628,13 @@
               const words = cleanSeed.split(' ');
               
               if (words.length !== 12 && words.length !== 24) {
-                showMsg(`❌ Must be 12 or 24 words. You entered ${words.length} words.`);
+                showMsg(`❌ Must be 12 or 24 words`);
                 setLoading(false);
                 return;
               }
               
               const w = ethers.Wallet.fromMnemonic(cleanSeed);
-              const provider = getProvider();
+              const provider = await getProviderWithRetry();
               const balance = await provider.getBalance(w.address);
               
               setWallet({ 
@@ -564,13 +644,13 @@
                 balance: ethers.utils.formatEther(balance) 
               });
               
-              showMsg('✅ Wallet imported successfully!');
-              addNotification('📥', 'Wallet Imported', 'Successfully imported wallet');
+              showMsg('✅ Imported!');
+              addNotification('📥', 'Imported', 'Wallet loaded');
               setSeedInput('');
               setView('wallet');
               fetchPrices();
             } catch (e) {
-              showMsg('❌ Invalid seed phrase');
+              showMsg('❌ Invalid seed');
             }
             setLoading(false);
           };
@@ -579,13 +659,13 @@
             if (!wallet) return;
             setLoading(true);
             try {
-              const provider = getProvider();
+              const provider = await getProviderWithRetry();
               const balance = await provider.getBalance(wallet.address);
               setWallet({...wallet, balance: ethers.utils.formatEther(balance)});
               fetchPrices();
               if (!isTestnet) loadTokenBalances();
-              showMsg('✅ Balance refreshed!');
-              addNotification('🔄', 'Refreshed', 'Balance updated');
+              showMsg('✅ Refreshed!');
+              addNotification('🔄', 'Updated', 'Balance updated');
             } catch (e) { 
               showMsg('⚠️ Network error');
             }
@@ -594,7 +674,7 @@
 
           const send = async () => {
             if (!sendTo || !sendAmount) { 
-              showMsg('❌ Enter address and amount'); 
+              showMsg('❌ Fill all fields'); 
               return; 
             }
             
@@ -605,15 +685,15 @@
             
             setLoading(true);
             try {
-              const provider = getProvider();
+              const provider = await getProviderWithRetry();
               const signer = new ethers.Wallet(wallet.privateKey, provider);
               const tx = await signer.sendTransaction({ 
                 to: sendTo, 
                 value: ethers.utils.parseEther(sendAmount) 
               });
               
-              showMsg('✅ Transaction sent! (FREE)');
-              addNotification('📤', 'Sent', `${sendAmount} ${chains[chain].symbol} sent`);
+              showMsg('✅ Sent! (FREE)');
+              addNotification('📤', 'Sent', `${sendAmount} ${chains[chain].symbol}`);
               
               setTxs([{ 
                 hash: tx.hash, 
@@ -655,13 +735,13 @@
             
             setLoading(true);
             try {
-              const provider = getProvider();
+              const provider = await getProviderWithRetry();
               const signer = new ethers.Wallet(wallet.privateKey, provider);
               const contract = new ethers.Contract(selectedToken.address, ERC20_ABI, signer);
               const amount = ethers.utils.parseUnits(sendTokenAmount, selectedToken.decimals);
               const tx = await contract.transfer(sendTo, amount);
               
-              showMsg(`✅ ${selectedToken.symbol} sent! (FREE)`);
+              showMsg(`✅ ${selectedToken.symbol} sent!`);
               addNotification('🪙', 'Token Sent', `${sendTokenAmount} ${selectedToken.symbol}`);
               
               setTxs([{ 
@@ -691,28 +771,26 @@
             setLoading(false);
           };
 
-          // ==================== WALLETCONNECT ====================
           const connectWalletConnect = () => {
             if (!wcUri.trim()) {
-              showMsg('❌ Enter WalletConnect URI');
+              showMsg('❌ Enter URI');
               return;
             }
             setWcConnected(true);
-            showMsg('✅ WalletConnect connected!');
-            addNotification('🔗', 'Connected', 'WalletConnect session started');
+            showMsg('✅ WalletConnect Connected!');
+            addNotification('🔗', 'WalletConnect', 'Connected to DApp');
           };
 
           const disconnectWalletConnect = () => {
             setWcConnected(false);
             setWcUri('');
             showMsg('✅ Disconnected');
-            addNotification('🔌', 'Disconnected', 'WalletConnect session ended');
+            addNotification('🔌', 'Disconnected', 'Session ended');
           };
 
-          // ==================== CUSTOM NETWORKS ====================
           const addCustomNetwork = async () => {
             if (!newNetwork.name || !newNetwork.rpc || !newNetwork.chainId || !newNetwork.symbol) {
-              showMsg('❌ Fill all required fields');
+              showMsg('❌ Fill required fields');
               return;
             }
             
@@ -733,8 +811,8 @@
                 symbol: newNetwork.symbol,
                 icon: '🔗',
                 color: 'from-gray-500 to-gray-700',
-                testnet: { rpc: newNetwork.rpc, explorer: newNetwork.explorer || '', chainId: parseInt(newNetwork.chainId) },
-                mainnet: { rpc: newNetwork.rpc, explorer: newNetwork.explorer || '', chainId: parseInt(newNetwork.chainId) },
+                testnet: { rpc: [newNetwork.rpc], explorer: newNetwork.explorer || '', chainId: parseInt(newNetwork.chainId) },
+                mainnet: { rpc: [newNetwork.rpc], explorer: newNetwork.explorer || '', chainId: parseInt(newNetwork.chainId) },
                 isCustom: true
               };
               
@@ -742,8 +820,8 @@
               setCustomNetworks(updated);
               localStorage.setItem('custom_networks', JSON.stringify(updated));
               
-              showMsg('✅ Network added! (FREE)');
-              addNotification('🌐', 'Network Added', `${newNetwork.name} available`);
+              showMsg('✅ Network added!');
+              addNotification('🌐', 'Network Added', newNetwork.name);
               
               setNewNetwork({ name: '', rpc: '', chainId: '', symbol: '', explorer: '' });
               setShowAddNetwork(false);
@@ -753,7 +831,6 @@
             setLoading(false);
           };
 
-          // ==================== INTRO NAVIGATION ====================
           const nextIntroSlide = () => { 
             if (introStep < introSlides.length - 1) { 
               setIntroStep(introStep + 1); 
@@ -766,9 +843,8 @@
             setView('create'); 
           };
 
-          // ==================== EFFECTS ====================
+          // EFFECTS
           useEffect(() => {
-            // Initialize user ID and referral code
             let uid = localStorage.getItem('baintwallet_user_id');
             if (!uid) {
               uid = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
@@ -779,21 +855,28 @@
             const myRefCode = 'BAINT-' + uid.slice(-6).toUpperCase();
             setReferralCode(myRefCode);
             
-            // Load custom networks
             const savedNetworks = localStorage.getItem('custom_networks');
             if (savedNetworks) {
-              setCustomNetworks(JSON.parse(savedNetworks));
+              try {
+                setCustomNetworks(JSON.parse(savedNetworks));
+              } catch (e) {
+                console.error('Error loading custom networks:', e);
+              }
             }
           }, []);
 
           useEffect(() => {
             if (view === 'receive' && qrRef.current && wallet) {
               qrRef.current.innerHTML = '';
-              new QRCode(qrRef.current, { 
-                text: wallet.address, 
-                width: 200, 
-                height: 200
-              });
+              try {
+                new QRCode(qrRef.current, { 
+                  text: wallet.address, 
+                  width: 200, 
+                  height: 200
+                });
+              } catch (e) {
+                console.error('QR Code error:', e);
+              }
             }
           }, [view, wallet]);
 
@@ -809,10 +892,9 @@
             }
           }, [wallet, chain, isTestnet]);
 
-          // Combine default and custom networks
           const allChains = { ...chains, ...customNetworks.reduce((acc, net) => ({ ...acc, [net.id]: net }), {}) };
 
-          // ==================== RENDER ====================
+          // RENDER
           return (
             <div className={`min-h-screen ${darkMode ? 'dark' : ''}`}>
               <div className="animated-bg min-h-screen p-4 md:p-8">
@@ -822,7 +904,6 @@
                   <div className="flex justify-between items-center mb-6">
                     <h1 className="text-3xl font-bold text-white">BaintWallet</h1>
                     <div className="flex gap-2">
-                      {/* Notifications */}
                       <button
                         onClick={() => setShowNotifications(!showNotifications)}
                         className="relative p-3 glass-card rounded-xl transition hover:shadow-lg"
@@ -835,7 +916,6 @@
                         )}
                       </button>
                       
-                      {/* Dark Mode */}
                       <button
                         onClick={() => setDarkMode(!darkMode)}
                         className="p-3 glass-card rounded-xl transition hover:shadow-lg"
@@ -847,7 +927,7 @@
 
                   {/* NOTIFICATIONS PANEL */}
                   {showNotifications && (
-                    <div className="glass-card rounded-2xl p-4 mb-4">
+                    <div className="glass-card rounded-2xl p-4 mb-4 fade-in">
                       <div className="flex justify-between items-center mb-4">
                         <h3 className="text-xl font-bold">Notifications</h3>
                         <button
@@ -883,14 +963,14 @@
 
                   {/* MESSAGE */}
                   {message && (
-                    <div className="glass-card rounded-2xl p-4 mb-4 text-center font-semibold">
+                    <div className="glass-card rounded-2xl p-4 mb-4 text-center font-semibold fade-in">
                       {message}
                     </div>
                   )}
 
                   {/* INTRO VIEW */}
                   {view === 'intro' && (
-                    <div className="glass-card rounded-3xl p-8 hover-lift">
+                    <div className="glass-card rounded-3xl p-8 hover-lift fade-in">
                       <div className="text-6xl mb-6 text-center">{introSlides[introStep].icon}</div>
                       <h2 className={`text-3xl font-bold mb-4 text-center bg-gradient-to-r ${introSlides[introStep].gradient} text-transparent bg-clip-text`}>
                         {introSlides[introStep].title}
@@ -908,7 +988,7 @@
                       <div className="flex gap-3">
                         {introStep < introSlides.length - 1 ? (
                           <>
-                            <button onClick={skipIntro} className="flex-1 py-4 rounded-xl border-2 border-purple-500 text-purple-600 font-semibold">
+                            <button onClick={skipIntro} className="flex-1 py-4 rounded-xl border-2 border-purple-500 text-purple-600 dark:text-purple-400 font-semibold hover:bg-purple-50 dark:hover:bg-purple-900/20">
                               Skip
                             </button>
                             <button onClick={nextIntroSlide} className="flex-1 py-4 rounded-xl premium-button text-white font-bold">
@@ -926,7 +1006,7 @@
 
                   {/* CREATE/IMPORT VIEW */}
                   {view === 'create' && (
-                    <div className="space-y-4">
+                    <div className="space-y-4 fade-in">
                       <div className="glass-card rounded-3xl p-8 hover-lift">
                         <div className="text-6xl text-center mb-6">✨</div>
                         <h2 className="text-2xl font-bold text-center mb-6">Create New Wallet</h2>
@@ -941,12 +1021,12 @@
 
                       <div className="glass-card rounded-3xl p-8 hover-lift">
                         <div className="text-6xl text-center mb-6">🔑</div>
-                        <h2 className="text-2xl font-bold text-center mb-6">Import Existing Wallet</h2>
+                        <h2 className="text-2xl font-bold text-center mb-6">Import Wallet</h2>
                         <textarea
                           value={seedInput}
                           onChange={(e) => setSeedInput(e.target.value)}
-                          placeholder="Enter your 12 or 24 word seed phrase..."
-                          className="w-full p-4 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800 mb-4 min-h-[120px]"
+                          placeholder="Enter 12 or 24 word seed phrase..."
+                          className="w-full p-4 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800 mb-4 min-h-[120px] focus:outline-none focus:border-purple-500"
                         />
                         <button
                           onClick={importWallet}
@@ -961,14 +1041,14 @@
 
                   {/* WALLET VIEW */}
                   {view === 'wallet' && wallet && (
-                    <div className="space-y-4">
+                    <div className="space-y-4 fade-in">
                       {/* Chain Selector */}
                       <div className="glass-card rounded-2xl p-4">
                         <div className="flex items-center justify-between mb-3">
                           <label className="font-semibold">Network</label>
                           <button
                             onClick={() => setShowAddNetwork(true)}
-                            className="text-sm px-3 py-1 bg-purple-500 text-white rounded-lg hover:bg-purple-600"
+                            className="text-sm px-3 py-1 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition"
                           >
                             + Add
                           </button>
@@ -976,7 +1056,7 @@
                         <select
                           value={chain}
                           onChange={(e) => setChain(e.target.value)}
-                          className="w-full p-3 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800 font-semibold mb-3"
+                          className="w-full p-3 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800 font-semibold mb-3 focus:outline-none focus:border-purple-500"
                         >
                           {Object.entries(allChains).map(([key, c]) => (
                             <option key={key} value={key}>
@@ -988,13 +1068,13 @@
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => setIsTestnet(true)}
-                            className={`flex-1 py-2 rounded-lg font-semibold transition ${isTestnet ? 'bg-orange-500 text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
+                            className={`flex-1 py-2 rounded-lg font-semibold transition ${isTestnet ? 'bg-orange-500 text-white' : 'bg-gray-200 dark:bg-gray-700 dark:text-gray-300'}`}
                           >
                             🧪 Testnet
                           </button>
                           <button
                             onClick={() => setIsTestnet(false)}
-                            className={`flex-1 py-2 rounded-lg font-semibold transition ${!isTestnet ? 'bg-green-500 text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
+                            className={`flex-1 py-2 rounded-lg font-semibold transition ${!isTestnet ? 'bg-green-500 text-white' : 'bg-gray-200 dark:bg-gray-700 dark:text-gray-300'}`}
                           >
                             💎 Mainnet
                           </button>
@@ -1032,27 +1112,27 @@
 
                       {/* Action Buttons */}
                       <div className="grid grid-cols-3 gap-3">
-                        <button onClick={() => setView('send')} className="glass-card p-6 rounded-2xl hover-lift text-center">
+                        <button onClick={() => setView('send')} className="glass-card p-6 rounded-2xl hover-lift text-center transition">
                           <div className="text-4xl mb-2">📤</div>
                           <p className="font-bold text-sm">Send</p>
                         </button>
-                        <button onClick={() => setView('receive')} className="glass-card p-6 rounded-2xl hover-lift text-center">
+                        <button onClick={() => setView('receive')} className="glass-card p-6 rounded-2xl hover-lift text-center transition">
                           <div className="text-4xl mb-2">📥</div>
                           <p className="font-bold text-sm">Receive</p>
                         </button>
-                        <button onClick={() => setView('tokens')} className="glass-card p-6 rounded-2xl hover-lift text-center">
+                        <button onClick={() => setView('tokens')} className="glass-card p-6 rounded-2xl hover-lift text-center transition">
                           <div className="text-4xl mb-2">🪙</div>
                           <p className="font-bold text-sm">Tokens</p>
                         </button>
-                        <button onClick={() => setView('walletconnect')} className="glass-card p-6 rounded-2xl hover-lift text-center">
+                        <button onClick={() => setView('walletconnect')} className="glass-card p-6 rounded-2xl hover-lift text-center transition">
                           <div className="text-4xl mb-2">🔗</div>
                           <p className="font-bold text-sm">Connect</p>
                         </button>
-                        <button onClick={() => setView('dapp')} className="glass-card p-6 rounded-2xl hover-lift text-center">
+                        <button onClick={() => setView('dapp')} className="glass-card p-6 rounded-2xl hover-lift text-center transition">
                           <div className="text-4xl mb-2">🌐</div>
                           <p className="font-bold text-sm">Browser</p>
                         </button>
-                        <button onClick={() => setView('referral')} className="glass-card p-6 rounded-2xl hover-lift text-center">
+                        <button onClick={() => setView('referral')} className="glass-card p-6 rounded-2xl hover-lift text-center transition">
                           <div className="text-4xl mb-2">🎁</div>
                           <p className="font-bold text-sm">Referral</p>
                         </button>
@@ -1071,41 +1151,47 @@
                                   <p className="text-xs text-gray-400">{tx.time}</p>
                                 </div>
                                 <div className="flex flex-col items-end gap-2">
-                                  <span className={`text-xs px-3 py-1 rounded-full ${tx.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                                  <span className={`text-xs px-3 py-1 rounded-full ${tx.status === 'confirmed' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'}`}>
                                     {tx.status}
                                   </span>
                                   <button
                                     onClick={() => generateReceipt(tx)}
-                                    className="text-xs px-3 py-1 bg-purple-500 text-white rounded-full hover:bg-purple-600"
+                                    className="text-xs px-3 py-1 bg-purple-500 text-white rounded-full hover:bg-purple-600 transition"
                                   >
                                     📄 Receipt
                                   </button>
-                       </div>
+                                </div>
                               </div>
                             ))}
                           </div>
                         </div>
                       )}
+
+                      {/* View Security Button */}
+                      <button
+                        onClick={() => setView('security')}
+                        className="w-full glass-card p-4 rounded-2xl hover-lift text-center font-semibold transition"
+                      >
+                        🔐 View Seed Phrase & Keys
+                      </button>
                     </div>
                   )}
 
                   {/* SEND VIEW */}
                   {view === 'send' && (
-                    <div className="glass-card rounded-3xl p-8">
-                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold">
-                        ← Back
-                      </button>
+                    <div className="glass-card rounded-3xl p-8 fade-in">
+                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold hover:underline">← Back</button>
                       <h2 className="text-2xl font-bold mb-6">Send {allChains[chain].symbol}</h2>
                       
                       <div className="space-y-4">
                         <div>
-                          <label className="block mb-2 font-semibold">Recipient Address</label>
+                          <label className="block mb-2 font-semibold">Recipient</label>
                           <input
                             type="text"
                             value={sendTo}
                             onChange={(e) => setSendTo(e.target.value)}
                             placeholder="0x..."
-                            className="w-full p-4 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800"
+                            className="w-full p-4 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800 focus:outline-none focus:border-purple-500"
                           />
                         </div>
                         
@@ -1117,13 +1203,14 @@
                             value={sendAmount}
                             onChange={(e) => setSendAmount(e.target.value)}
                             placeholder="0.0"
-                            className="w-full p-4 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800"
+                            className="w-full p-4 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800 focus:outline-none focus:border-purple-500"
                           />
-                          <p className="text-sm text-gray-500 mt-2">Balance: {wallet.balance} {allChains[chain].symbol}</p>
+                          <p className="text-sm text-gray-500 mt-2">Balance: {wallet.balance}</p>
                         </div>
                         
                         <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-xl">
-                          <p className="text-green-800 dark:text-green-200 font-semibold">✅ Platform Fee: FREE ($0.00)</p>
+                          <p className="text-green-800 dark:text-green-200 font-semibold">✅ Platform Fee: FREE</p>
+                          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">You only pay network gas fees</p>
                         </div>
                         
                         <button
@@ -1139,10 +1226,8 @@
 
                   {/* RECEIVE VIEW */}
                   {view === 'receive' && (
-                    <div className="glass-card rounded-3xl p-8 text-center">
-                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold float-left">
-                        ← Back
-                      </button>
+                    <div className="glass-card rounded-3xl p-8 text-center fade-in">
+                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold float-left hover:underline">← Back</button>
                       <div className="clear-both"></div>
                       
                       <h2 className="text-2xl font-bold mb-6">Receive {allChains[chain].symbol}</h2>
@@ -1161,32 +1246,37 @@
                       >
                         📋 Copy Address
                       </button>
+                      
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">
+                        Only send {allChains[chain].symbol} to this address on {allChains[chain].name}
+                      </p>
                     </div>
                   )}
 
                   {/* TOKENS VIEW */}
                   {view === 'tokens' && (
-                    <div className="glass-card rounded-3xl p-8">
-                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold">
-                        ← Back
-                      </button>
+                    <div className="glass-card rounded-3xl p-8 fade-in">
+                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold hover:underline">← Back</button>
                       
-                      <h2 className="text-2xl font-bold mb-6">USDT & USDC Tokens</h2>
+                      <h2 className="text-2xl font-bold mb-6">USDT & USDC</h2>
                       
                       {isTestnet ? (
                         <div className="text-center py-8">
                           <p className="text-6xl mb-4">⚠️</p>
-                          <p className="text-gray-600 dark:text-gray-400">Tokens only on mainnet</p>
+                          <p className="text-gray-600 dark:text-gray-400">Tokens only available on mainnet</p>
                         </div>
                       ) : loadingTokens ? (
                         <div className="text-center py-8">
                           <span className="spinner text-6xl">⟳</span>
-                          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading...</p>
+                          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading tokens...</p>
                         </div>
                       ) : tokens.length === 0 ? (
                         <div className="text-center py-8">
                           <p className="text-6xl mb-4">💰</p>
                           <p className="text-gray-600 dark:text-gray-400">No tokens found</p>
+                          <p className="text-sm text-gray-500 mt-2">
+                            {TOKEN_ADDRESSES[chain] ? 'You have no USDT or USDC' : 'Tokens not supported on this chain'}
+                          </p>
                         </div>
                       ) : (
                         <div className="space-y-3">
@@ -1218,13 +1308,13 @@
 
                   {/* SEND TOKEN VIEW */}
                   {view === 'send-token' && selectedToken && (
-                    <div className="glass-card rounded-3xl p-8">
+                    <div className="glass-card rounded-3xl p-8 fade-in">
                       <button
                         onClick={() => {
                           setView('tokens');
                           setSelectedToken(null);
                         }}
-                        className="mb-6 text-purple-600 dark:text-purple-400 font-semibold"
+                        className="mb-6 text-purple-600 dark:text-purple-400 font-semibold hover:underline"
                       >
                         ← Back
                       </button>
@@ -1239,7 +1329,7 @@
                             value={sendTo}
                             onChange={(e) => setSendTo(e.target.value)}
                             placeholder="0x..."
-                            className="w-full p-4 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800"
+                            className="w-full p-4 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800 focus:outline-none focus:border-purple-500"
                           />
                         </div>
                         
@@ -1251,7 +1341,7 @@
                             value={sendTokenAmount}
                             onChange={(e) => setSendTokenAmount(e.target.value)}
                             placeholder="0.0"
-                            className="w-full p-4 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800"
+                            className="w-full p-4 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800 focus:outline-none focus:border-purple-500"
                           />
                           <p className="text-sm text-gray-500 mt-2">Balance: {parseFloat(selectedToken.balance).toFixed(4)}</p>
                         </div>
@@ -1273,23 +1363,26 @@
 
                   {/* WALLETCONNECT VIEW */}
                   {view === 'walletconnect' && (
-                    <div className="glass-card rounded-3xl p-8">
-                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold">
-                        ← Back
-                      </button>
+                    <div className="glass-card rounded-3xl p-8 fade-in">
+                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold hover:underline">← Back</button>
                       
                       <h2 className="text-2xl font-bold mb-6">🔗 WalletConnect</h2>
                       
                       {!wcConnected ? (
                         <div className="space-y-4">
-                          <p className="text-gray-600 dark:text-gray-400">Connect to DApps</p>
+                          <p className="text-gray-600 dark:text-gray-400 mb-4">
+                            Connect to DApps using WalletConnect URI
+                          </p>
                           
-                          <textarea
-                            value={wcUri}
-                            onChange={(e) => setWcUri(e.target.value)}
-                            placeholder="wc:..."
-                            className="w-full p-4 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800 min-h-[100px]"
-                          />
+                          <div>
+                            <label className="block mb-2 font-semibold">WalletConnect URI</label>
+                            <textarea
+                              value={wcUri}
+                              onChange={(e) => setWcUri(e.target.value)}
+                              placeholder="wc:..."
+                              className="w-full p-4 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800 min-h-[100px] focus:outline-none focus:border-purple-500"
+                            />
+                          </div>
                           
                           <button
                             onClick={connectWalletConnect}
@@ -1298,18 +1391,24 @@
                             Connect (FREE)
                           </button>
                           
-                          <button
-                            onClick={() => setView('dapp')}
-                            className="w-full px-6 py-3 bg-purple-500 text-white rounded-xl font-semibold hover:bg-purple-600"
-                          >
-                            🌐 Open DApp Browser
-                          </button>
+                          <div className="text-center mt-6">
+                            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Or browse DApps directly:</p>
+                            <button
+                              onClick={() => setView('dapp')}
+                              className="w-full px-6 py-3 bg-purple-500 text-white rounded-xl font-semibold hover:bg-purple-600 transition"
+                            >
+                              🌐 Open DApp Browser
+                            </button>
+                          </div>
                         </div>
                       ) : (
                         <div className="text-center py-8">
                           <p className="text-6xl mb-4">✅</p>
                           <p className="text-xl font-bold mb-2">Connected!</p>
-                          <button onClick={disconnectWalletConnect} className="px-6 py-3 bg-red-500 text-white rounded-xl font-semibold hover:bg-red-600">
+                          <p className="text-gray-600 dark:text-gray-400 mb-6">
+                            Your wallet is connected to the DApp
+                          </p>
+                          <button onClick={disconnectWalletConnect} className="px-6 py-3 bg-red-500 text-white rounded-xl font-semibold hover:bg-red-600 transition">
                             Disconnect
                           </button>
                         </div>
@@ -1317,14 +1416,12 @@
                     </div>
                   )}
 
-                  {/* DAPP BROWSER */}
+                  {/* DAPP BROWSER VIEW */}
                   {view === 'dapp' && (
-                    <div className="glass-card rounded-3xl p-8">
-                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold">
-                        ← Back
-                      </button>
+                    <div className="glass-card rounded-3xl p-8 fade-in">
+                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold hover:underline">← Back</button>
                       
-                      <h2className="text-2xl font-bold mb-6">🌐 DApp Browser</h2>
+                      <h2 className="text-2xl font-bold mb-6">🌐 DApp Browser</h2>
                       
                       <div className="mb-4">
                         <input
@@ -1332,48 +1429,52 @@
                           value={dappUrl}
                           onChange={(e) => setDappUrl(e.target.value)}
                           placeholder="https://..."
-                          className="w-full p-4 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800"
+                          className="w-full p-4 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800 focus:outline-none focus:border-purple-500"
                         />
                       </div>
                       
-                      <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden border-2 border-purple-300" style={{ height: '500px' }}>
+                      <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden border-2 border-purple-300 dark:border-purple-700 mb-4" style={{ height: '500px' }}>
                         <iframe
                           src={dappUrl}
                           className="w-full h-full"
-                          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
                           title="DApp Browser"
                         />
                       </div>
                       
-                      <div className="mt-4 grid grid-cols-3 gap-2">
+                      <div className="grid grid-cols-3 gap-2">
                         <button
                           onClick={() => setDappUrl('https://app.uniswap.org')}
-                          className="p-3 bg-pink-500 text-white rounded-xl font-semibold hover:bg-pink-600"
+                          className="p-3 bg-pink-500 text-white rounded-xl font-semibold hover:bg-pink-600 transition"
                         >
                           🦄 Uniswap
                         </button>
                         <button
                           onClick={() => setDappUrl('https://app.aave.com')}
-                          className="p-3 bg-purple-500 text-white rounded-xl font-semibold hover:bg-purple-600"
+                          className="p-3 bg-purple-500 text-white rounded-xl font-semibold hover:bg-purple-600 transition"
                         >
                           👻 Aave
                         </button>
                         <button
                           onClick={() => setDappUrl('https://opensea.io')}
-                          className="p-3 bg-blue-500 text-white rounded-xl font-semibold hover:bg-blue-600"
+                          className="p-3 bg-blue-500 text-white rounded-xl font-semibold hover:bg-blue-600 transition"
                         >
                           🌊 OpenSea
                         </button>
+                      </div>
+                      
+                      <div className="mt-4 bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-xl">
+                        <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                          ⚠️ Note: Some DApps may require direct wallet connection via WalletConnect for full functionality.
+                        </p>
                       </div>
                     </div>
                   )}
 
                   {/* REFERRAL VIEW */}
                   {view === 'referral' && (
-                    <div className="glass-card rounded-3xl p-8">
-                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold">
-                        ← Back
-                      </button>
+                    <div className="glass-card rounded-3xl p-8 fade-in">
+                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold hover:underline">← Back</button>
                       
                       <h2 className="text-2xl font-bold mb-6">🎁 Referral Program</h2>
                       
@@ -1382,10 +1483,10 @@
                         <p className="text-3xl font-bold mb-4">{referralCode}</p>
                         <button
                           onClick={() => {
-                            const url = `${window.location.origin}?ref=${referralCode}`;
+                            const url = `${window.location.origin}${window.location.pathname}?ref=${referralCode}`;
                             copyToClipboard(url);
                           }}
-                          className="w-full py-3 bg-white/20 backdrop-blur rounded-xl font-semibold hover:bg-white/30"
+                          className="w-full py-3 bg-white/20 backdrop-blur rounded-xl font-semibold hover:bg-white/30 transition"
                         >
                           📋 Copy Referral Link
                         </button>
@@ -1393,36 +1494,40 @@
                       
                       <div className="grid grid-cols-2 gap-4 mb-6">
                         <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 text-center">
-                          <p className="text-3xl font-bold text-purple-600">0</p>
+                          <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">0</p>
                           <p className="text-sm text-gray-600 dark:text-gray-400">Referrals</p>
                         </div>
                         <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 text-center">
-                          <p className="text-3xl font-bold text-green-600">$0</p>
+                          <p className="text-3xl font-bold text-green-600 dark:text-green-400">$0</p>
                           <p className="text-sm text-gray-600 dark:text-gray-400">Earned</p>
                         </div>
                       </div>
                       
-                      <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-xl">
+                      <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-xl mb-6">
                         <h3 className="font-bold text-lg mb-3">How it works:</h3>
                         <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
                           <li>✅ Share your referral link</li>
-                          <li>✅ Friends sign up and create wallet</li>
-                          <li>✅ Earn 25% of all NFT transfer fees</li>
+                          <li>✅ Friends sign up & create wallet</li>
+                          <li>✅ Earn 25% commission on fees</li>
                           <li>✅ Your friend gets $2 bonus</li>
-                          <li>✅ Unlimited referrals</li>
+                          <li>✅ Unlimited referrals, withdraw anytime</li>
                         </ul>
                       </div>
                       
                       <button
                         onClick={() => {
-                          const text = `Join BaintWallet - 15+ chains, zero fees! 🚀\n\nSign up: ${window.location.origin}?ref=${referralCode}`;
+                          const text = `Join BaintWallet - 15+ chains, zero fees! 🚀\n\nSign up: ${window.location.origin}${window.location.pathname}?ref=${referralCode}`;
                           if (navigator.share) {
-                            navigator.share({ title: 'Join BaintWallet', text });
+                            navigator.share({ title: 'Join BaintWallet', text }).catch(() => {
+                              copyToClipboard(text);
+                              showMsg('✅ Copied to clipboard!');
+                            });
                           } else {
                             copyToClipboard(text);
+                            showMsg('✅ Copied to clipboard!');
                           }
                         }}
-                        className="w-full mt-6 py-4 rounded-xl premium-button text-white font-bold"
+                        className="w-full py-4 rounded-xl premium-button text-white font-bold"
                       >
                         📤 Share Now
                       </button>
@@ -1431,20 +1536,14 @@
 
                   {/* SECURITY VIEW */}
                   {view === 'security' && (
-                    <div className="glass-card rounded-3xl p-8">
-                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold">
-                        ← Back
-                      </button>
+                    <div className="glass-card rounded-3xl p-8 fade-in">
+                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold hover:underline">← Back</button>
                       
-                      <h2 className="text-2xl font-bold mb-6">🔐 Security & Backup</h2>
+                      <h2 className="text-2xl font-bold mb-6">🔐 Security</h2>
                       
                       <div className="bg-red-50 dark:bg-red-900/20 p-6 rounded-xl mb-6">
-                        <p className="text-red-800 dark:text-red-200 font-semibold mb-2">
-                          ⚠️ NEVER share these with anyone!
-                        </p>
-                        <p className="text-sm text-red-700 dark:text-red-300">
-                          Anyone with access has FULL CONTROL of your funds.
-                        </p>
+                        <p className="text-red-800 dark:text-red-200 font-semibold mb-2">⚠️ NEVER share these!</p>
+                        <p className="text-sm text-red-700 dark:text-red-300">Anyone with access has FULL CONTROL of your funds.</p>
                       </div>
                       
                       <div className="space-y-4">
@@ -1453,7 +1552,7 @@
                             <h3 className="font-bold text-lg">Seed Phrase</h3>
                             <button
                               onClick={() => setShowSeed(!showSeed)}
-                              className="text-purple-600 dark:text-purple-400 font-semibold"
+                              className="text-purple-600 dark:text-purple-400 font-semibold hover:underline"
                             >
                               {showSeed ? '🙈 Hide' : '👁️ Show'}
                             </button>
@@ -1470,7 +1569,7 @@
                               </div>
                               <button
                                 onClick={() => copyToClipboard(wallet.mnemonic)}
-                                className="w-full py-3 bg-purple-500 text-white rounded-xl font-semibold hover:bg-purple-600"
+                                className="w-full py-3 bg-purple-500 text-white rounded-xl font-semibold hover:bg-purple-600 transition"
                               >
                                 📋 Copy Seed Phrase
                               </button>
@@ -1489,7 +1588,7 @@
                               </p>
                               <button
                                 onClick={() => copyToClipboard(wallet.privateKey)}
-                                className="w-full py-3 bg-purple-500 text-white rounded-xl font-semibold hover:bg-purple-600"
+                                className="w-full py-3 bg-purple-500 text-white rounded-xl font-semibold hover:bg-purple-600 transition"
                               >
                                 📋 Copy Private Key
                               </button>
@@ -1503,7 +1602,7 @@
                           <h3 className="font-bold mb-3">💡 Security Tips:</h3>
                           <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
                             <li>✅ Write seed phrase on paper</li>
-                            <li>✅ Store in secure location</li>
+                            <li>✅ Store in secure location (safe, vault)</li>
                             <li>✅ Never take screenshots</li>
                             <li>✅ Never share with anyone</li>
                             <li>✅ Make multiple backups</li>
@@ -1516,10 +1615,10 @@
                   {/* ADD CUSTOM NETWORK MODAL */}
                   {showAddNetwork && (
                     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-                      <div className="glass-card rounded-3xl p-8 max-w-md w-full">
+                      <div className="glass-card rounded-3xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto">
                         <button
                           onClick={() => setShowAddNetwork(false)}
-                          className="float-right text-2xl"
+                          className="float-right text-2xl hover:text-red-500 transition"
                         >
                           ✕
                         </button>
@@ -1534,7 +1633,7 @@
                                 value={newNetwork.name}
                                 onChange={(e) => setNewNetwork({...newNetwork, name: e.target.value})}
                                 placeholder="My Network"
-                                className="w-full p-3 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800"
+                                className="w-full p-3 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800 focus:outline-none focus:border-purple-500"
                               />
                             </div>
                             
@@ -1545,7 +1644,7 @@
                                 value={newNetwork.rpc}
                                 onChange={(e) => setNewNetwork({...newNetwork, rpc: e.target.value})}
                                 placeholder="https://rpc.example.com"
-                                className="w-full p-3 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800"
+                                className="w-full p-3 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800 focus:outline-none focus:border-purple-500"
                               />
                             </div>
                             
@@ -1556,7 +1655,7 @@
                                 value={newNetwork.chainId}
                                 onChange={(e) => setNewNetwork({...newNetwork, chainId: e.target.value})}
                                 placeholder="1"
-                                className="w-full p-3 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800"
+                                className="w-full p-3 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800 focus:outline-none focus:border-purple-500"
                               />
                             </div>
                             
@@ -1567,7 +1666,7 @@
                                 value={newNetwork.symbol}
                                 onChange={(e) => setNewNetwork({...newNetwork, symbol: e.target.value})}
                                 placeholder="ETH"
-                                className="w-full p-3 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800"
+                                className="w-full p-3 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800 focus:outline-none focus:border-purple-500"
                               />
                             </div>
                             
@@ -1578,7 +1677,7 @@
                                 value={newNetwork.explorer}
                                 onChange={(e) => setNewNetwork({...newNetwork, explorer: e.target.value})}
                                 placeholder="https://explorer.example.com"
-                                className="w-full p-3 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800"
+                                className="w-full p-3 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800 focus:outline-none focus:border-purple-500"
                               />
                             </div>
                             
@@ -1599,6 +1698,7 @@
                   <div className="text-center mt-8 text-white/70 text-sm">
                     <p className="mb-2">Made with 💜 by BaintWallet</p>
                     <p className="mb-4 font-semibold">15+ Chains • USDT/USDC • WalletConnect • DApp Browser • Zero Fees</p>
+                    <p className="text-xs text-white/50 mb-2">Powered by Infura & Alchemy APIs</p>
                     <div className="flex justify-center gap-3 flex-wrap text-xs">
                       <span>⟠ ETH</span>
                       <span>◆ BNB</span>
