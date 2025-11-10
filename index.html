@@ -71,6 +71,36 @@
             to { transform: rotate(360deg); } 
         }
         
+        .hover-lift {
+            transition: all 0.3s;
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
         const { useState, useEffect, useRef } = React;
         
         function App() {
@@ -105,31 +135,21 @@
           const [newNetwork, setNewNetwork] = useState({ name: '', rpc: '', chainId: '', symbol: '', explorer: '' });
           const qrRef = useRef(null);
 
-          // ==================== API KEYS ====================
-          const INFURA_KEY = '2eb003d772d345c48214cad05878e67c';
-          const ALCHEMY_KEY = 'RV7R38aklgHvDsNjslY6Xo9ptfJ--r2t';
+          // ==================== CONSTANTS ====================
           const PLATFORM_WALLET = '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb';
           const NFT_TRANSFER_FEE = 0.50;
 
-          // ==================== ALL 15 CHAINS WITH INFURA & ALCHEMY ====================
+          // ==================== ALL 15 CHAINS ====================
           const chains = {
             ETH: {
               name: 'Ethereum', symbol: 'ETH', icon: '⟠', color: 'from-blue-500 to-purple-600',
               testnet: { 
-                rpc: [
-                  `https://sepolia.infura.io/v3/${INFURA_KEY}`,
-                  `https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_KEY}`,
-                  'https://ethereum-sepolia-rpc.publicnode.com'
-                ],
+                rpc: 'https://sepolia.infura.io/v3/2eb003d772d345c48214cad05878e67c',
                 explorer: 'https://sepolia.etherscan.io', 
                 chainId: 11155111 
               },
               mainnet: { 
-                rpc: [
-                  `https://mainnet.infura.io/v3/${INFURA_KEY}`,
-                  `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`,
-                  'https://ethereum-rpc.publicnode.com'
-                ],
+                rpc: 'https://mainnet.infura.io/v3/2eb003d772d345c48214cad05878e67c',
                 explorer: 'https://etherscan.io', 
                 chainId: 1 
               }
@@ -137,12 +157,12 @@
             BNB: {
               name: 'BNB Chain', symbol: 'BNB', icon: '◆', color: 'from-yellow-400 to-orange-500',
               testnet: { 
-                rpc: ['https://bsc-testnet-rpc.publicnode.com'],
+                rpc: 'https://bsc-testnet-rpc.publicnode.com',
                 explorer: 'https://testnet.bscscan.com', 
                 chainId: 97 
               },
               mainnet: { 
-                rpc: ['https://bsc-dataseed1.binance.org', 'https://bsc-rpc.publicnode.com'],
+                rpc: 'https://bsc-dataseed1.binance.org',
                 explorer: 'https://bscscan.com', 
                 chainId: 56 
               }
@@ -150,19 +170,12 @@
             POLYGON: {
               name: 'Polygon', symbol: 'MATIC', icon: '⬡', color: 'from-purple-500 to-purple-700',
               testnet: { 
-                rpc: [
-                  'https://rpc-amoy.polygon.technology',
-                  `https://polygon-amoy.g.alchemy.com/v2/${ALCHEMY_KEY}`
-                ],
+                rpc: 'https://rpc-amoy.polygon.technology',
                 explorer: 'https://amoy.polygonscan.com', 
                 chainId: 80002 
               },
               mainnet: { 
-                rpc: [
-                  'https://polygon-rpc.com',
-                  `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`,
-                  'https://polygon.llamarpc.com'
-                ],
+                rpc: 'https://polygon-rpc.com',
                 explorer: 'https://polygonscan.com', 
                 chainId: 137 
               }
@@ -170,12 +183,12 @@
             AVAX: {
               name: 'Avalanche', symbol: 'AVAX', icon: '▲', color: 'from-red-500 to-pink-600',
               testnet: { 
-                rpc: ['https://api.avax-test.network/ext/bc/C/rpc'],
+                rpc: 'https://api.avax-test.network/ext/bc/C/rpc',
                 explorer: 'https://testnet.snowtrace.io', 
                 chainId: 43113 
               },
               mainnet: { 
-                rpc: ['https://api.avax.network/ext/bc/C/rpc', 'https://avalanche.public-rpc.com'],
+                rpc: 'https://api.avax.network/ext/bc/C/rpc',
                 explorer: 'https://snowtrace.io', 
                 chainId: 43114 
               }
@@ -183,19 +196,12 @@
             ARBITRUM: {
               name: 'Arbitrum', symbol: 'ETH', icon: '◊', color: 'from-blue-400 to-cyan-500',
               testnet: { 
-                rpc: [
-                  'https://sepolia-rollup.arbitrum.io/rpc',
-                  `https://arb-sepolia.g.alchemy.com/v2/${ALCHEMY_KEY}`
-                ],
+                rpc: 'https://sepolia-rollup.arbitrum.io/rpc',
                 explorer: 'https://sepolia.arbiscan.io', 
                 chainId: 421614 
               },
               mainnet: { 
-                rpc: [
-                  'https://arb1.arbitrum.io/rpc',
-                  `https://arb-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`,
-                  'https://arbitrum.llamarpc.com'
-                ],
+                rpc: 'https://arb1.arbitrum.io/rpc',
                 explorer: 'https://arbiscan.io', 
                 chainId: 42161 
               }
@@ -203,19 +209,12 @@
             OPTIMISM: {
               name: 'Optimism', symbol: 'ETH', icon: '◉', color: 'from-red-400 to-pink-500',
               testnet: { 
-                rpc: [
-                  'https://sepolia.optimism.io',
-                  `https://opt-sepolia.g.alchemy.com/v2/${ALCHEMY_KEY}`
-                ],
+                rpc: 'https://sepolia.optimism.io',
                 explorer: 'https://sepolia-optimism.etherscan.io', 
                 chainId: 11155420 
               },
               mainnet: { 
-                rpc: [
-                  'https://mainnet.optimism.io',
-                  `https://opt-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`,
-                  'https://optimism.llamarpc.com'
-                ],
+                rpc: 'https://mainnet.optimism.io',
                 explorer: 'https://optimistic.etherscan.io', 
                 chainId: 10 
               }
@@ -223,19 +222,12 @@
             BASE: {
               name: 'Base', symbol: 'ETH', icon: '⚡', color: 'from-blue-600 to-indigo-700',
               testnet: { 
-                rpc: [
-                  'https://sepolia.base.org',
-                  `https://base-sepolia.g.alchemy.com/v2/${ALCHEMY_KEY}`
-                ],
+                rpc: 'https://sepolia.base.org',
                 explorer: 'https://sepolia.basescan.org', 
                 chainId: 84532 
               },
               mainnet: { 
-                rpc: [
-                  'https://mainnet.base.org',
-                  `https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`,
-                  'https://base.llamarpc.com'
-                ],
+                rpc: 'https://mainnet.base.org',
                 explorer: 'https://basescan.org', 
                 chainId: 8453 
               }
@@ -243,16 +235,12 @@
             ARC: {
               name: 'Circle Arc', symbol: 'USDC', icon: '🔵', color: 'from-blue-400 to-cyan-600',
               testnet: { 
-                rpc: [
-                  'https://rpc.testnet.arc.network',
-                  'https://rpc.blockdaemon.testnet.arc.network',
-                  'https://rpc.drpc.testnet.arc.network'
-                ],
+                rpc: 'https://rpc.testnet.arc.network',
                 explorer: 'https://testnet.arcscan.app', 
                 chainId: 5042002
               },
               mainnet: { 
-                rpc: ['https://arc-mainnet.rpc.caldera.xyz/http'],
+                rpc: 'https://arc-mainnet.rpc.caldera.xyz/http',
                 explorer: 'https://arc.explorer.caldera.xyz',
                 chainId: 41453
               }
@@ -260,12 +248,12 @@
             FANTOM: {
               name: 'Fantom', symbol: 'FTM', icon: '👻', color: 'from-blue-500 to-indigo-600',
               testnet: { 
-                rpc: ['https://rpc.testnet.fantom.network'],
+                rpc: 'https://rpc.testnet.fantom.network',
                 explorer: 'https://testnet.ftmscan.com', 
                 chainId: 4002 
               },
               mainnet: { 
-                rpc: ['https://rpc.ftm.tools', 'https://fantom.publicnode.com'],
+                rpc: 'https://rpc.ftm.tools',
                 explorer: 'https://ftmscan.com', 
                 chainId: 250 
               }
@@ -273,12 +261,12 @@
             ZKSYNC: {
               name: 'zkSync Era', symbol: 'ETH', icon: '⚔️', color: 'from-purple-600 to-blue-600',
               testnet: { 
-                rpc: ['https://sepolia.era.zksync.dev'],
+                rpc: 'https://sepolia.era.zksync.dev',
                 explorer: 'https://sepolia.explorer.zksync.io', 
                 chainId: 300 
               },
               mainnet: { 
-                rpc: ['https://mainnet.era.zksync.io'],
+                rpc: 'https://mainnet.era.zksync.io',
                 explorer: 'https://explorer.zksync.io', 
                 chainId: 324 
               }
@@ -286,12 +274,12 @@
             SCROLL: {
               name: 'Scroll', symbol: 'ETH', icon: '📜', color: 'from-orange-400 to-red-500',
               testnet: { 
-                rpc: ['https://sepolia-rpc.scroll.io'],
+                rpc: 'https://sepolia-rpc.scroll.io',
                 explorer: 'https://sepolia.scrollscan.com', 
                 chainId: 534351 
               },
               mainnet: { 
-                rpc: ['https://rpc.scroll.io'],
+                rpc: 'https://rpc.scroll.io',
                 explorer: 'https://scrollscan.com', 
                 chainId: 534352 
               }
@@ -299,12 +287,12 @@
             MANTLE: {
               name: 'Mantle', symbol: 'MNT', icon: '🧩', color: 'from-gray-800 to-black',
               testnet: { 
-                rpc: ['https://rpc.sepolia.mantle.xyz'],
+                rpc: 'https://rpc.sepolia.mantle.xyz',
                 explorer: 'https://sepolia.mantlescan.xyz', 
                 chainId: 5003 
               },
               mainnet: { 
-                rpc: ['https://rpc.mantle.xyz'],
+                rpc: 'https://rpc.mantle.xyz',
                 explorer: 'https://mantlescan.xyz', 
                 chainId: 5000 
               }
@@ -312,12 +300,12 @@
             LINEA: {
               name: 'Linea', symbol: 'ETH', icon: '📐', color: 'from-gray-700 to-gray-900',
               testnet: { 
-                rpc: ['https://rpc.goerli.linea.build'],
+                rpc: 'https://rpc.goerli.linea.build',
                 explorer: 'https://goerli.lineascan.build', 
                 chainId: 59140 
               },
               mainnet: { 
-                rpc: ['https://rpc.linea.build'],
+                rpc: 'https://rpc.linea.build',
                 explorer: 'https://lineascan.build', 
                 chainId: 59144 
               }
@@ -325,12 +313,12 @@
             HYPERLIQUID: {
               name: 'Hyperliquid', symbol: 'ETH', icon: '💧', color: 'from-cyan-500 to-blue-600',
               testnet: { 
-                rpc: ['https://api.hyperliquid-testnet.xyz/evm'],
+                rpc: 'https://api.hyperliquid-testnet.xyz/evm',
                 explorer: 'https://explorer.hyperliquid-testnet.xyz', 
                 chainId: 998 
               },
               mainnet: { 
-                rpc: ['https://api.hyperliquid.xyz/evm'],
+                rpc: 'https://api.hyperliquid.xyz/evm',
                 explorer: 'https://explorer.hyperliquid.xyz', 
                 chainId: 999 
               }
@@ -338,12 +326,12 @@
             APECHAIN: {
               name: 'ApeChain', symbol: 'APE', icon: '🦍', color: 'from-blue-600 to-indigo-700',
               testnet: { 
-                rpc: ['https://curtis.rpc.caldera.xyz/http'],
+                rpc: 'https://curtis.rpc.caldera.xyz/http',
                 explorer: 'https://curtis.explorer.caldera.xyz', 
                 chainId: 33111 
               },
               mainnet: { 
-                rpc: ['https://apechain.caldera.dev/http', 'https://rpc.apechain.com'],
+                rpc: 'https://apechain.caldera.dev/http',
                 explorer: 'https://apechain.calderaexplorer.xyz', 
                 chainId: 33139 
               }
@@ -383,10 +371,10 @@
           ];
 
           const introSlides = [
-            { icon: '🌟', title: 'Welcome to BaintWallet', description: 'Premium wallet with 15+ chains, Infura & Alchemy powered!', gradient: 'from-blue-500 to-purple-600' },
-            { icon: '🔐', title: 'Your Keys, Your Crypto', description: 'Military-grade encryption. We never store your keys.', gradient: 'from-purple-500 to-pink-600' },
+            { icon: '🌟', title: 'Welcome to BaintWallet', description: 'The most advanced crypto wallet with 15+ blockchain support.', gradient: 'from-blue-500 to-purple-600' },
+            { icon: '🔐', title: 'Your Keys, Your Crypto', description: 'Military-grade encryption. We never store your private keys.', gradient: 'from-purple-500 to-pink-600' },
             { icon: '⚡', title: 'Multi-Chain Support', description: 'Ethereum, BNB, Polygon, Arbitrum, Base, Circle Arc, Hyperliquid, ApeChain & more!', gradient: 'from-yellow-400 to-orange-500' },
-            { icon: '💎', title: 'Zero Platform Fees', description: 'FREE sends, WalletConnect, DApp Browser, Referrals!', gradient: 'from-indigo-500 to-purple-600' }
+            { icon: '💎', title: 'Zero Platform Fees', description: 'FREE sends, WalletConnect, DApp Browser, Referrals. Ready for Web3!', gradient: 'from-indigo-500 to-purple-600' }
           ];
 
           // ==================== HELPER FUNCTIONS ====================
@@ -407,25 +395,10 @@
             setNotifications(prev => [notif, ...prev.slice(0, 9)]);
           };
 
-          const getProviderWithRetry = async (maxRetries = 3) => {
+          const getProvider = () => {
             const c = chains[chain];
-            const network = isTestnet ? c.testnet : c.mainnet;
-            const rpcList = Array.isArray(network.rpc) ? network.rpc : [network.rpc];
-            
-            for (let i = 0; i < Math.min(maxRetries, rpcList.length); i++) {
-              try {
-                const rpc = rpcList[i];
-                const provider = new ethers.providers.JsonRpcProvider(rpc);
-                await provider.getNetwork();
-                console.log(`✅ Connected to ${chain} using RPC ${i + 1}`);
-                return provider;
-              } catch (e) {
-                console.error(`❌ RPC ${i + 1} failed:`, e.message);
-                if (i === Math.min(maxRetries, rpcList.length) - 1) {
-                  throw new Error(`All RPCs failed for ${chain}`);
-                }
-              }
-            }
+            const rpc = isTestnet ? c.testnet.rpc : c.mainnet.rpc;
+            return new ethers.providers.JsonRpcProvider(rpc);
           };
 
           const getExplorer = () => { 
@@ -474,7 +447,7 @@
             const tokenList = [];
             
             try {
-              const provider = await getProviderWithRetry();
+              const provider = getProvider();
               
               for (const [symbol, address] of Object.entries(tokenAddresses)) {
                 try {
@@ -529,11 +502,10 @@
               doc.setFontSize(10);
               doc.setTextColor(128, 128, 128);
               doc.text('Generated by BaintWallet', 20, 280);
-              doc.text('Powered by Infura & Alchemy', 20, 290);
               
               doc.save(`receipt-${tx.hash.slice(0, 10)}.pdf`);
               showMsg('✅ Receipt downloaded!');
-              addNotification('📄', 'Receipt', 'PDF downloaded');
+              addNotification('📄', 'Receipt', 'PDF downloaded successfully');
             } catch (e) {
               showMsg('❌ Could not generate receipt');
             }
@@ -544,7 +516,7 @@
             setLoading(true);
             try {
               const w = ethers.Wallet.createRandom();
-              const provider = await getProviderWithRetry();
+              const provider = getProvider();
               const balance = await provider.getBalance(w.address);
               
               setWallet({ 
@@ -554,8 +526,8 @@
                 balance: ethers.utils.formatEther(balance) 
               });
               
-              showMsg('✅ Wallet created!');
-              addNotification('✨', 'Created', 'Wallet ready!');
+              showMsg('✅ Wallet created successfully!');
+              addNotification('✨', 'Wallet Created', 'Your new wallet is ready!');
               setView('wallet');
               fetchPrices();
             } catch (e) { 
@@ -566,7 +538,7 @@
 
           const importWallet = async () => {
             if (!seedInput.trim()) { 
-              showMsg('❌ Enter seed phrase'); 
+              showMsg('❌ Please enter your seed phrase'); 
               return; 
             }
             
@@ -576,13 +548,13 @@
               const words = cleanSeed.split(' ');
               
               if (words.length !== 12 && words.length !== 24) {
-                showMsg(`❌ Must be 12 or 24 words`);
+                showMsg(`❌ Must be 12 or 24 words. You entered ${words.length} words.`);
                 setLoading(false);
                 return;
               }
               
               const w = ethers.Wallet.fromMnemonic(cleanSeed);
-              const provider = await getProviderWithRetry();
+              const provider = getProvider();
               const balance = await provider.getBalance(w.address);
               
               setWallet({ 
@@ -592,13 +564,13 @@
                 balance: ethers.utils.formatEther(balance) 
               });
               
-              showMsg('✅ Imported!');
-              addNotification('📥', 'Imported', 'Wallet imported');
+              showMsg('✅ Wallet imported successfully!');
+              addNotification('📥', 'Wallet Imported', 'Successfully imported wallet');
               setSeedInput('');
               setView('wallet');
               fetchPrices();
             } catch (e) {
-              showMsg('❌ Invalid seed');
+              showMsg('❌ Invalid seed phrase');
             }
             setLoading(false);
           };
@@ -606,14 +578,14 @@
           const refreshBalance = async () => {
             if (!wallet) return;
             setLoading(true);
-            try{
-              const provider = await getProviderWithRetry();
+            try {
+              const provider = getProvider();
               const balance = await provider.getBalance(wallet.address);
               setWallet({...wallet, balance: ethers.utils.formatEther(balance)});
               fetchPrices();
               if (!isTestnet) loadTokenBalances();
-              showMsg('✅ Refreshed!');
-              addNotification('🔄', 'Updated', 'Balance refreshed');
+              showMsg('✅ Balance refreshed!');
+              addNotification('🔄', 'Refreshed', 'Balance updated');
             } catch (e) { 
               showMsg('⚠️ Network error');
             }
@@ -622,7 +594,7 @@
 
           const send = async () => {
             if (!sendTo || !sendAmount) { 
-              showMsg('❌ Fill all fields'); 
+              showMsg('❌ Enter address and amount'); 
               return; 
             }
             
@@ -633,15 +605,15 @@
             
             setLoading(true);
             try {
-              const provider = await getProviderWithRetry();
+              const provider = getProvider();
               const signer = new ethers.Wallet(wallet.privateKey, provider);
               const tx = await signer.sendTransaction({ 
                 to: sendTo, 
                 value: ethers.utils.parseEther(sendAmount) 
               });
               
-              showMsg('✅ Sent! (FREE)');
-              addNotification('📤', 'Sent', `${sendAmount} ${chains[chain].symbol}`);
+              showMsg('✅ Transaction sent! (FREE)');
+              addNotification('📤', 'Sent', `${sendAmount} ${chains[chain].symbol} sent`);
               
               setTxs([{ 
                 hash: tx.hash, 
@@ -683,13 +655,13 @@
             
             setLoading(true);
             try {
-              const provider = await getProviderWithRetry();
+              const provider = getProvider();
               const signer = new ethers.Wallet(wallet.privateKey, provider);
               const contract = new ethers.Contract(selectedToken.address, ERC20_ABI, signer);
               const amount = ethers.utils.parseUnits(sendTokenAmount, selectedToken.decimals);
               const tx = await contract.transfer(sendTo, amount);
               
-              showMsg(`✅ ${selectedToken.symbol} sent!`);
+              showMsg(`✅ ${selectedToken.symbol} sent! (FREE)`);
               addNotification('🪙', 'Token Sent', `${sendTokenAmount} ${selectedToken.symbol}`);
               
               setTxs([{ 
@@ -719,26 +691,28 @@
             setLoading(false);
           };
 
+          // ==================== WALLETCONNECT ====================
           const connectWalletConnect = () => {
             if (!wcUri.trim()) {
-              showMsg('❌ Enter URI');
+              showMsg('❌ Enter WalletConnect URI');
               return;
             }
             setWcConnected(true);
-            showMsg('✅ Connected!');
-            addNotification('🔗', 'WalletConnect', 'Connected to DApp');
+            showMsg('✅ WalletConnect connected!');
+            addNotification('🔗', 'Connected', 'WalletConnect session started');
           };
 
           const disconnectWalletConnect = () => {
             setWcConnected(false);
             setWcUri('');
             showMsg('✅ Disconnected');
-            addNotification('🔌', 'Disconnected', 'Session ended');
+            addNotification('🔌', 'Disconnected', 'WalletConnect session ended');
           };
 
+          // ==================== CUSTOM NETWORKS ====================
           const addCustomNetwork = async () => {
             if (!newNetwork.name || !newNetwork.rpc || !newNetwork.chainId || !newNetwork.symbol) {
-              showMsg('❌ Fill required fields');
+              showMsg('❌ Fill all required fields');
               return;
             }
             
@@ -759,8 +733,8 @@
                 symbol: newNetwork.symbol,
                 icon: '🔗',
                 color: 'from-gray-500 to-gray-700',
-                testnet: { rpc: [newNetwork.rpc], explorer: newNetwork.explorer || '', chainId: parseInt(newNetwork.chainId) },
-                mainnet: { rpc: [newNetwork.rpc], explorer: newNetwork.explorer || '', chainId: parseInt(newNetwork.chainId) },
+                testnet: { rpc: newNetwork.rpc, explorer: newNetwork.explorer || '', chainId: parseInt(newNetwork.chainId) },
+                mainnet: { rpc: newNetwork.rpc, explorer: newNetwork.explorer || '', chainId: parseInt(newNetwork.chainId) },
                 isCustom: true
               };
               
@@ -768,8 +742,8 @@
               setCustomNetworks(updated);
               localStorage.setItem('custom_networks', JSON.stringify(updated));
               
-              showMsg('✅ Network added!');
-              addNotification('🌐', 'Network Added', newNetwork.name);
+              showMsg('✅ Network added! (FREE)');
+              addNotification('🌐', 'Network Added', `${newNetwork.name} available`);
               
               setNewNetwork({ name: '', rpc: '', chainId: '', symbol: '', explorer: '' });
               setShowAddNetwork(false);
@@ -779,6 +753,7 @@
             setLoading(false);
           };
 
+          // ==================== INTRO NAVIGATION ====================
           const nextIntroSlide = () => { 
             if (introStep < introSlides.length - 1) { 
               setIntroStep(introStep + 1); 
@@ -791,7 +766,9 @@
             setView('create'); 
           };
 
+          // ==================== EFFECTS ====================
           useEffect(() => {
+            // Initialize user ID and referral code
             let uid = localStorage.getItem('baintwallet_user_id');
             if (!uid) {
               uid = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
@@ -802,6 +779,7 @@
             const myRefCode = 'BAINT-' + uid.slice(-6).toUpperCase();
             setReferralCode(myRefCode);
             
+            // Load custom networks
             const savedNetworks = localStorage.getItem('custom_networks');
             if (savedNetworks) {
               setCustomNetworks(JSON.parse(savedNetworks));
@@ -831,16 +809,20 @@
             }
           }, [wallet, chain, isTestnet]);
 
+          // Combine default and custom networks
           const allChains = { ...chains, ...customNetworks.reduce((acc, net) => ({ ...acc, [net.id]: net }), {}) };
 
+          // ==================== RENDER ====================
           return (
             <div className={`min-h-screen ${darkMode ? 'dark' : ''}`}>
               <div className="animated-bg min-h-screen p-4 md:p-8">
                 <div className="max-w-md mx-auto">
                   
+                  {/* HEADER */}
                   <div className="flex justify-between items-center mb-6">
                     <h1 className="text-3xl font-bold text-white">BaintWallet</h1>
                     <div className="flex gap-2">
+                      {/* Notifications */}
                       <button
                         onClick={() => setShowNotifications(!showNotifications)}
                         className="relative p-3 glass-card rounded-xl transition hover:shadow-lg"
@@ -853,6 +835,7 @@
                         )}
                       </button>
                       
+                      {/* Dark Mode */}
                       <button
                         onClick={() => setDarkMode(!darkMode)}
                         className="p-3 glass-card rounded-xl transition hover:shadow-lg"
@@ -862,6 +845,7 @@
                     </div>
                   </div>
 
+                  {/* NOTIFICATIONS PANEL */}
                   {showNotifications && (
                     <div className="glass-card rounded-2xl p-4 mb-4">
                       <div className="flex justify-between items-center mb-4">
@@ -871,7 +855,7 @@
                             setNotifications([]);
                             setShowNotifications(false);
                           }}
-                          className="text-sm text-purple-600"
+                          className="text-sm text-purple-600 dark:text-purple-400"
                         >
                           Clear All
                         </button>
@@ -897,19 +881,21 @@
                     </div>
                   )}
 
+                  {/* MESSAGE */}
                   {message && (
                     <div className="glass-card rounded-2xl p-4 mb-4 text-center font-semibold">
                       {message}
                     </div>
                   )}
 
+                  {/* INTRO VIEW */}
                   {view === 'intro' && (
                     <div className="glass-card rounded-3xl p-8 hover-lift">
                       <div className="text-6xl mb-6 text-center">{introSlides[introStep].icon}</div>
                       <h2 className={`text-3xl font-bold mb-4 text-center bg-gradient-to-r ${introSlides[introStep].gradient} text-transparent bg-clip-text`}>
                         {introSlides[introStep].title}
                       </h2>
-                      <p className="text-gray-600 dark:text-gray-300 text-center mb-8">
+                      <p className="text-gray-600 dark:text-gray-300 text-center mb-8 leading-relaxed">
                         {introSlides[introStep].description}
                       </p>
                       
@@ -938,6 +924,7 @@
                     </div>
                   )}
 
+                  {/* CREATE/IMPORT VIEW */}
                   {view === 'create' && (
                     <div className="space-y-4">
                       <div className="glass-card rounded-3xl p-8 hover-lift">
@@ -958,7 +945,7 @@
                         <textarea
                           value={seedInput}
                           onChange={(e) => setSeedInput(e.target.value)}
-                          placeholder="Enter 12 or 24 word seed phrase..."
+                          placeholder="Enter your 12 or 24 word seed phrase..."
                           className="w-full p-4 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800 mb-4 min-h-[120px]"
                         />
                         <button
@@ -972,8 +959,10 @@
                     </div>
                   )}
 
+                  {/* WALLET VIEW */}
                   {view === 'wallet' && wallet && (
                     <div className="space-y-4">
+                      {/* Chain Selector */}
                       <div className="glass-card rounded-2xl p-4">
                         <div className="flex items-center justify-between mb-3">
                           <label className="font-semibold">Network</label>
@@ -1012,6 +1001,7 @@
                         </div>
                       </div>
 
+                      {/* Balance Card */}
                       <div className={`glass-card rounded-3xl p-8 hover-lift bg-gradient-to-br ${allChains[chain].color}`}>
                         <p className="text-white/80 mb-2 font-semibold">Total Balance</p>
                         <h2 className="text-5xl font-bold text-white mb-2">
@@ -1040,6 +1030,7 @@
                         </div>
                       </div>
 
+                      {/* Action Buttons */}
                       <div className="grid grid-cols-3 gap-3">
                         <button onClick={() => setView('send')} className="glass-card p-6 rounded-2xl hover-lift text-center">
                           <div className="text-4xl mb-2">📤</div>
@@ -1067,6 +1058,7 @@
                         </button>
                       </div>
 
+                      {/* Recent Transactions */}
                       {txs.length > 0 && (
                         <div className="glass-card rounded-2xl p-6">
                           <h3 className="text-xl font-bold mb-4">Recent Transactions</h3>
@@ -1088,7 +1080,7 @@
                                   >
                                     📄 Receipt
                                   </button>
-                                </div>
+                       </div>
                               </div>
                             ))}
                           </div>
@@ -1097,14 +1089,17 @@
                     </div>
                   )}
 
+                  {/* SEND VIEW */}
                   {view === 'send' && (
                     <div className="glass-card rounded-3xl p-8">
-                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold">← Back</button>
+                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold">
+                        ← Back
+                      </button>
                       <h2 className="text-2xl font-bold mb-6">Send {allChains[chain].symbol}</h2>
                       
                       <div className="space-y-4">
                         <div>
-                          <label className="block mb-2 font-semibold">Recipient</label>
+                          <label className="block mb-2 font-semibold">Recipient Address</label>
                           <input
                             type="text"
                             value={sendTo}
@@ -1124,11 +1119,11 @@
                             placeholder="0.0"
                             className="w-full p-4 rounded-xl border-2 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-800"
                           />
-                          <p className="text-sm text-gray-500 mt-2">Balance: {wallet.balance}</p>
+                          <p className="text-sm text-gray-500 mt-2">Balance: {wallet.balance} {allChains[chain].symbol}</p>
                         </div>
                         
                         <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-xl">
-                          <p className="text-green-800 dark:text-green-200 font-semibold">✅ Platform Fee: FREE</p>
+                          <p className="text-green-800 dark:text-green-200 font-semibold">✅ Platform Fee: FREE ($0.00)</p>
                         </div>
                         
                         <button
@@ -1142,9 +1137,12 @@
                     </div>
                   )}
 
+                  {/* RECEIVE VIEW */}
                   {view === 'receive' && (
                     <div className="glass-card rounded-3xl p-8 text-center">
-                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold float-left">← Back</button>
+                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold float-left">
+                        ← Back
+                      </button>
                       <div className="clear-both"></div>
                       
                       <h2 className="text-2xl font-bold mb-6">Receive {allChains[chain].symbol}</h2>
@@ -1166,11 +1164,14 @@
                     </div>
                   )}
 
+                  {/* TOKENS VIEW */}
                   {view === 'tokens' && (
                     <div className="glass-card rounded-3xl p-8">
-                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold">← Back</button>
+                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold">
+                        ← Back
+                      </button>
                       
-                      <h2 className="text-2xl font-bold mb-6">USDT & USDC</h2>
+                      <h2 className="text-2xl font-bold mb-6">USDT & USDC Tokens</h2>
                       
                       {isTestnet ? (
                         <div className="text-center py-8">
@@ -1180,7 +1181,7 @@
                       ) : loadingTokens ? (
                         <div className="text-center py-8">
                           <span className="spinner text-6xl">⟳</span>
-                          <p className="mt-4">Loading...</p>
+                          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading...</p>
                         </div>
                       ) : tokens.length === 0 ? (
                         <div className="text-center py-8">
@@ -1215,6 +1216,7 @@
                     </div>
                   )}
 
+                  {/* SEND TOKEN VIEW */}
                   {view === 'send-token' && selectedToken && (
                     <div className="glass-card rounded-3xl p-8">
                       <button
@@ -1261,7 +1263,7 @@
                         <button
                           onClick={sendToken}
                           disabled={loading}
-                          className="w-full py-4 rounded-xl premium-button text-white font-bold text-lgdisabled:opacity-50"
+                          className="w-full py-4 rounded-xl premium-button text-white font-bold text-lg disabled:opacity-50"
                         >
                           {loading ? <span className="spinner">⟳</span> : 'Send Token (FREE)'}
                         </button>
@@ -1269,9 +1271,12 @@
                     </div>
                   )}
 
+                  {/* WALLETCONNECT VIEW */}
                   {view === 'walletconnect' && (
                     <div className="glass-card rounded-3xl p-8">
-                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold">← Back</button>
+                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold">
+                        ← Back
+                      </button>
                       
                       <h2 className="text-2xl font-bold mb-6">🔗 WalletConnect</h2>
                       
@@ -1312,11 +1317,14 @@
                     </div>
                   )}
 
+                  {/* DAPP BROWSER */}
                   {view === 'dapp' && (
                     <div className="glass-card rounded-3xl p-8">
-                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold">← Back</button>
+                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold">
+                        ← Back
+                      </button>
                       
-                      <h2 className="text-2xl font-bold mb-6">🌐 DApp Browser</h2>
+                      <h2className="text-2xl font-bold mb-6">🌐 DApp Browser</h2>
                       
                       <div className="mb-4">
                         <input
@@ -1360,9 +1368,12 @@
                     </div>
                   )}
 
+                  {/* REFERRAL VIEW */}
                   {view === 'referral' && (
                     <div className="glass-card rounded-3xl p-8">
-                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold">← Back</button>
+                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold">
+                        ← Back
+                      </button>
                       
                       <h2 className="text-2xl font-bold mb-6">🎁 Referral Program</h2>
                       
@@ -1395,7 +1406,7 @@
                         <h3 className="font-bold text-lg mb-3">How it works:</h3>
                         <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
                           <li>✅ Share your referral link</li>
-                          <li>✅ Friends sign up & create wallet</li>
+                          <li>✅ Friends sign up and create wallet</li>
                           <li>✅ Earn 25% of all NFT transfer fees</li>
                           <li>✅ Your friend gets $2 bonus</li>
                           <li>✅ Unlimited referrals</li>
@@ -1418,15 +1429,22 @@
                     </div>
                   )}
 
+                  {/* SECURITY VIEW */}
                   {view === 'security' && (
                     <div className="glass-card rounded-3xl p-8">
-                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold">← Back</button>
+                      <button onClick={() => setView('wallet')} className="mb-6 text-purple-600 dark:text-purple-400 font-semibold">
+                        ← Back
+                      </button>
                       
-                      <h2 className="text-2xl font-bold mb-6">🔐 Security</h2>
+                      <h2 className="text-2xl font-bold mb-6">🔐 Security & Backup</h2>
                       
                       <div className="bg-red-50 dark:bg-red-900/20 p-6 rounded-xl mb-6">
-                        <p className="text-red-800 dark:text-red-200 font-semibold mb-2">⚠️ NEVER share these!</p>
-                        <p className="text-sm text-red-700 dark:text-red-300">Anyone with access has FULL CONTROL.</p>
+                        <p className="text-red-800 dark:text-red-200 font-semibold mb-2">
+                          ⚠️ NEVER share these with anyone!
+                        </p>
+                        <p className="text-sm text-red-700 dark:text-red-300">
+                          Anyone with access has FULL CONTROL of your funds.
+                        </p>
                       </div>
                       
                       <div className="space-y-4">
@@ -1495,6 +1513,7 @@
                     </div>
                   )}
 
+                  {/* ADD CUSTOM NETWORK MODAL */}
                   {showAddNetwork && (
                     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
                       <div className="glass-card rounded-3xl p-8 max-w-md w-full">
@@ -1576,10 +1595,10 @@
                     </div>
                   )}
 
+                  {/* FOOTER */}
                   <div className="text-center mt-8 text-white/70 text-sm">
                     <p className="mb-2">Made with 💜 by BaintWallet</p>
                     <p className="mb-4 font-semibold">15+ Chains • USDT/USDC • WalletConnect • DApp Browser • Zero Fees</p>
-                    <p className="text-xs text-white/50 mb-2">Powered by Infura & Alchemy APIs</p>
                     <div className="flex justify-center gap-3 flex-wrap text-xs">
                       <span>⟠ ETH</span>
                       <span>◆ BNB</span>
